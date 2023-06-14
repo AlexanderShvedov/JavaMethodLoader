@@ -44,8 +44,6 @@ public class Downloader {
             index = method.lastIndexOf(" ");
             returnValue = method.substring(0, index);
             method = method.substring(index + 1);
-//            index = returnValue.lastIndexOf(".");
-//            returnValue = returnValue.substring(index + 1);
 
             index = method.lastIndexOf("(");
             methodName = method.substring(0, index);
@@ -55,20 +53,11 @@ public class Downloader {
             while (index != -1) {
                 String arg = method.substring(0, index);
                 method = method.substring(index + 1);
-//                index = arg.lastIndexOf(".");
-//                if (index != -1) {
-//                    arg = arg.substring(index + 1);
-//                }
                 args.add(arg);
                 index = method.indexOf(",");
             }
             if (method.length() != 0) {
-                String arg = method;
-//                index = arg.lastIndexOf(".");
-//                if (index != -1) {
-//                    arg = arg.substring(index + 1);
-//                }
-                args.add(arg);
+                args.add(method);
             }
         }
     }
@@ -117,8 +106,6 @@ public class Downloader {
                     if (ind > -1) {
                         argi2 = argi2.substring(0, ind);
                     }
-//                            System.out.println(info.args.get(i));
-//                            System.out.println(argi2);
                     if (!info.args.get(i).contains(argi2)) {
                         return;
                     }
@@ -142,8 +129,6 @@ public class Downloader {
                 if (ind > -1) {
                     argi2 = argi2.substring(0, ind);
                 }
-//                            System.out.println(info.args.get(i));
-//                            System.out.println(argi2);
                 if (!info.args.get(i).contains(argi2)) {
                     return;
                 }
@@ -167,6 +152,7 @@ public class Downloader {
             }
         }
     }
+
     public String find(String directoryPath, String signature) {
         String FILE_PATH = directoryPath + "/";
         info = new SignatureInfo(signature.substring(1, signature.length() - 1));
