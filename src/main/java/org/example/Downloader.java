@@ -161,7 +161,11 @@ public class Downloader {
         String[] names = info.name.split("\\$");
         StringBuilder name = new StringBuilder(names[0]);
         int index = 1;
-        FILE_PATH += packagePath + "/" + name + ".java";
+        if (!directoryPath.contains(".java")) {
+            FILE_PATH += packagePath + "/" + name + ".java";
+        } else {
+            FILE_PATH = directoryPath;
+        }
         boolean parsing = false;
         CompilationUnit cu = null;
         while (!parsing) {
@@ -170,7 +174,7 @@ public class Downloader {
                 parsing = true;
             } catch (Exception e) {
                 if (index == names.length) {
-                    return null;
+                    return "can't find file";
                 }
                 name.append("$").append(names[index]);
                 FILE_PATH = directoryPath + "/" + packagePath + "/" + name + ".java";
