@@ -1,4 +1,4 @@
-package org.example;
+package main.org.example;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;

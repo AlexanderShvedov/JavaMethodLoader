@@ -1,4 +1,6 @@
-import org.example.Downloader;
+package test.java;
+
+import main.org.example.Downloader;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
