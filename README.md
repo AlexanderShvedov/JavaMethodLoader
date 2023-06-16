@@ -10,5 +10,5 @@
 
 Явный пример:
 
-<pre><code>java -jar Jparser17-1.0-SNAPSHOT.jar /Users/aleksandrsvedov/Jparser17/PacketsDirectory "<clojure.lang.LazySeq: clojure.lang.ISeq seq()>"
+<pre><code>java -jar Jparser17-1.0-SNAPSHOT.jar /Users/aleksandrsvedov/Jparser17/PacketsDirectory "&lt;clojure.lang.LazySeq: clojure.lang.ISeq seq()&gt;"
 </code></pre>
