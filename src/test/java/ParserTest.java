@@ -107,5 +107,37 @@ public class ParserTest {
         assertEquals(body0, "() -> x + y + z");
     }
 
+    @Test
+    public void JsonPathTest() {
+        Downloader downloader = new Downloader();
+        String path = "PacketsDirectory";
+        String signature0 = "<com.jayway.jsonpath.internal.filter.ValueNodes$PathNode: com.jayway.jsonpath.internal.filter.ValueNodes$PathNode asExistsCheck(boolean)>";
+        String signature1 = "<com.jayway.jsonpath.internal.filter.ValueNodes$PathNode: com.jayway.jsonpath.internal.filter.ValueNode evaluate(com.jayway.jsonpath.Predicate$PredicateContext)>";
+        String signature2 = "<com.jayway.jsonpath.internal.filter.ValueNodes$ValueListNode: void <init>(java.util.Collection)>";
+        String signature3 = "<com.jayway.jsonpath.internal.function.latebinding.PathLateBindingValue: void <init>(com.jayway.jsonpath.internal.Path,java.lang.Object,com.jayway.jsonpath.Configuration)>";
+        String signature4 = "<com.jayway.jsonpath.internal.path.ScanPathToken$FilterPathTokenPredicate: boolean matches(java.lang.Object)>";
+        String signature5 = "<com.jayway.jsonpath.spi.mapper.GsonMappingProvider: void <init>(java.util.concurrent.Callable)>";
+        String signature6 = "<com.jayway.jsonpath.spi.mapper.GsonMappingProvider: void <init>(com.google.gson.Gson)>";
+
+
+        String body0 = downloader.find(path, signature0);
+        String body1 = downloader.find(path, signature1); //wrong
+        String body2 = downloader.find(path, signature2);
+        String body3 = downloader.find(path, signature3);
+        String body4 = downloader.find(path, signature4); //wrong
+        String body5 = downloader.find(path, signature5);
+        String body6 = downloader.find(path, signature6);
+
+        assertNotNull(body0);
+        assertNotNull(body1);
+        assertNotNull(body2);
+        assertNotNull(body3);
+        assertNotNull(body4);
+        assertNotNull(body5);
+        assertNotNull(body6);
+    }
+
+
+
 
 }

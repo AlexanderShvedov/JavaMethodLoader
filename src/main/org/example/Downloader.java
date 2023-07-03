@@ -83,8 +83,7 @@ public class Downloader {
     }
 
     private class MethodNamePrinter extends VoidVisitorAdapter<Void> {
-        @Override
-        public void visit(MethodDeclaration methodDeclaration, Void arg) {
+        public void MethodVisit(MethodDeclaration methodDeclaration, Void arg) {
             String methodReturnValue = methodDeclaration.getTypeAsString();
             int ind = methodReturnValue.indexOf("<");
             if (ind > -1) {
@@ -106,6 +105,10 @@ public class Downloader {
                     if (ind > -1) {
                         argi2 = argi2.substring(0, ind);
                     }
+                    ind = argi2.lastIndexOf(".");
+                    if (ind > -1) {
+                        argi2 = argi2.substring(ind + 1);
+                    }
                     if (!info.args.get(i).contains(argi2)) {
                         return;
                     }
@@ -114,8 +117,7 @@ public class Downloader {
             }
         }
 
-        @Override
-        public void visit(ConstructorDeclaration methodDeclaration, Void arg) {
+        public void ConstructorVisit(ConstructorDeclaration methodDeclaration, Void arg) {
             NodeList<Parameter> args = methodDeclaration.getParameters();
             if (args.size() != info.args.size()) {
                 return;
@@ -138,15 +140,18 @@ public class Downloader {
 
         @Override
         public void visit(ClassOrInterfaceDeclaration md, Void arg) {
+            //System.out.println(info.className);
+            //System.out.println(info.methodName);
             super.visit(md, arg);
             if (md.getNameAsString().equals(info.className)) {
                 if (info.methodName.equals("<init>")) {
                     for (ConstructorDeclaration constructorDeclaration : md.getConstructors()) {
-                        this.visit(constructorDeclaration, arg);
+                        this.ConstructorVisit(constructorDeclaration, arg);
                     }
                 } else {
+                    //System.out.println(md.getNameAsString());
                     for (MethodDeclaration methodDeclaration : md.getMethods()) {
-                        this.visit(methodDeclaration, arg);
+                        this.MethodVisit(methodDeclaration, arg);
                     }
                 }
             }
