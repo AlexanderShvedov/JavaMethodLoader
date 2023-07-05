@@ -137,6 +137,36 @@ public class ParserTest {
         assertNotNull(body6);
     }
 
+    @Test
+    public void GsonTest() {
+        Downloader downloader = new Downloader();
+        String path = "PacketsDirectory";
+        String signature0 = "<com.google.gson.internal.bind.TypeAdapters$23: java.lang.Object read(com.google.gson.stream.JsonReader)>";
+        String signature1 = "<com.google.gson.internal.bind.TypeAdapters$3: java.lang.Object read(com.google.gson.stream.JsonReader)>";
+        String signature2 = "<com.google.gson.internal.bind.TypeAdapters$3: java.lang.Object read(com.google.gson.stream.JsonReader)>";
+        String signature3 = "<com.google.gson.internal.bind.TypeAdapters$4: void write(com.google.gson.stream.JsonWriter,java.lang.Object)>";
+        String signature4 = "<com.google.gson.internal.bind.TypeAdapters$28: void write(com.google.gson.stream.JsonWriter,java.lang.Object)>";
+        String signature5 = "<com.google.gson.internal.bind.TypeAdapters: com.google.gson.TypeAdapterFactory newFactory(java.lang.Class,com.google.gson.TypeAdapter)>";
+        String signature6 = "<com.google.gson.Gson: void <init>(com.google.gson.internal.Excluder,com.google.gson.FieldNamingStrategy,java.util.Map,boolean,boolean,boolean,boolean,com.google.gson.FormattingStyle,boolean,boolean,boolean,com.google.gson.LongSerializationPolicy,java.lang.String,int,int,java.util.List,java.util.List,java.util.List,com.google.gson.ToNumberStrategy,com.google.gson.ToNumberStrategy,java.util.List)>";
+
+
+        String body0 = downloader.find(path, signature0);
+        String body1 = downloader.find(path, signature1); //wrong
+        String body2 = downloader.find(path, signature2);
+        String body3 = downloader.find(path, signature3);
+        String body4 = downloader.find(path, signature4); //wrong
+        String body5 = downloader.find(path, signature5);
+        String body6 = downloader.find(path, signature6);
+
+        assertNotNull(body0);
+        assertNotNull(body1);
+        assertNotNull(body2);
+        assertNotNull(body3);
+        assertNotNull(body4);
+        assertNotNull(body5);
+        assertNotNull(body6);
+    }
+
 
 
 

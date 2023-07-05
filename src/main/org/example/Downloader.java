@@ -3,11 +3,9 @@ package main.org.example;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.ConstructorDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.LambdaExpr;
+import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
@@ -17,8 +15,7 @@ import java.io.File;
 
 public class Downloader {
 
-    private class SignatureInfo {
-        //private boolean parseCorrect;
+    private static class SignatureInfo {
         private String packge;
         private String name;
 
@@ -64,6 +61,49 @@ public class Downloader {
 
     private SignatureInfo info;
     private String result = null;
+
+    public static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            int d = Integer.parseInt(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+
+    private class MethodNamePrinterAnonymous extends VoidVisitorAdapter<Void> {
+        private int counter = 1;
+        private final int classNumber;
+
+        private MethodNamePrinterAnonymous(int classNumber) {
+            this.classNumber = classNumber;
+        }
+
+        @Override
+        public void visit(ObjectCreationExpr expr, Void arg) {
+            if (result != null) {
+                return;
+            }
+            if (expr.getAnonymousClassBody().isPresent()) {
+                MethodNamePrinter methodNameVisitor = new MethodNamePrinter();
+                for (BodyDeclaration b : expr.getAnonymousClassBody().get()) {
+                    if (b.isMethodDeclaration()) {
+                        methodNameVisitor.MethodVisit(b.asMethodDeclaration(), null);
+                        if (result != null) {
+                            if (counter < classNumber) {
+                                counter++;
+                                result = null;
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     private class MethodNamePrinterLambda extends VoidVisitorAdapter<Void> {
         private int counter = 0;
@@ -140,8 +180,6 @@ public class Downloader {
 
         @Override
         public void visit(ClassOrInterfaceDeclaration md, Void arg) {
-            //System.out.println(info.className);
-            //System.out.println(info.methodName);
             super.visit(md, arg);
             if (md.getNameAsString().equals(info.className)) {
                 if (info.methodName.equals("<init>")) {
@@ -149,7 +187,6 @@ public class Downloader {
                         this.ConstructorVisit(constructorDeclaration, arg);
                     }
                 } else {
-                    //System.out.println(md.getNameAsString());
                     for (MethodDeclaration methodDeclaration : md.getMethods()) {
                         this.MethodVisit(methodDeclaration, arg);
                     }
@@ -204,6 +241,23 @@ public class Downloader {
         }
 
         info.className = names[names.length - 1];
+        if (isNumeric(info.className)) {
+            int num = Integer.parseInt(info.className);
+            index = names.length - 3;
+            for (int i = index; i > -2; i--) {
+                VoidVisitor<Void> methodNameVisitor = new MethodNamePrinterAnonymous(num);
+                methodNameVisitor.visit(cu, null);
+                String ans = result;
+                if (ans != null) {
+                    result = null;
+                    return ans;
+                }
+                if (i > -1) {
+                    info.className = names[i] + "$" + info.className;
+                }
+            }
+            return null;
+        }
         index = names.length - 2;
         VoidVisitor<Void> methodNameVisitor = new MethodNamePrinter();
         for (int i = index; i > -2; i--) {
