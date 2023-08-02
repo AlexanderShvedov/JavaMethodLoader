@@ -195,33 +195,57 @@ public class Downloader {
         }
     }
 
+    public String getFile(final File folder, SignatureInfo info) {
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                String file = getFile(fileEntry, info);
+                if (file != null) {
+                    return file;
+                }
+            } else {
+                String fqn = fileEntry.getAbsolutePath();
+                String packagePath = info.packge;
+                packagePath = packagePath.replace(".", "/");
+                if (!fqn.contains(packagePath)) {
+                    continue;
+                }
+                String[] names = info.name.split("\\$");
+                StringBuilder name = new StringBuilder(names[0]);
+                int index = 1;
+                while (index <= names.length) {
+                    if (fileEntry.getName().contentEquals(name + ".java")) {
+                        return fqn;
+                    } else {
+                        if (index == names.length) {
+                            break;
+                        }
+                        name.append("$").append(names[index++]);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public String find(String directoryPath, String signature) {
-        String FILE_PATH = directoryPath + "/";
+        String FILE_PATH;
         info = new SignatureInfo(signature.substring(1, signature.length() - 1));
         String packagePath = info.packge;
         packagePath = packagePath.replace(".", "/");
         String[] names = info.name.split("\\$");
         StringBuilder name = new StringBuilder(names[0]);
         int index = 1;
+
         if (!directoryPath.contains(".java")) {
-            FILE_PATH += packagePath + "/" + name + ".java";
+            FILE_PATH = getFile(new File(directoryPath), info);
         } else {
             FILE_PATH = directoryPath;
         }
-        boolean parsing = false;
-        CompilationUnit cu = null;
-        while (!parsing) {
-            try {
-                cu = StaticJavaParser.parse(new File(FILE_PATH));
-                parsing = true;
-            } catch (Exception e) {
-                if (index == names.length) {
-                    return "can't find file";
-                }
-                name.append("$").append(names[index]);
-                FILE_PATH = directoryPath + "/" + packagePath + "/" + name + ".java";
-                index++;
-            }
+        CompilationUnit cu;
+        try {
+            cu = StaticJavaParser.parse(new File(FILE_PATH));
+        } catch (Exception e) {
+            return "can't find file";
         }
 
         String[] methodNames = info.methodName.split("\\$");
